@@ -5,7 +5,7 @@ An inverse to the latex compiler. From a texbox construct source and macros. Hen
 
 ## Coming soon
 
-For more information see [9 March 2023 TeX Hour](https://texhour.github.io/2023/03/09/unlatex-access-tree/). I intend before the TeX Hour to populate this repository with some tools and scripts.
+For more information see [9 March 2023 TeX Hour](https://texhour.github.io/2023/03/09/unlatex-texbox-access-tree/). I intend before the TeX Hour to populate this repository with some tools and scripts.
 
 ## Summary
 
