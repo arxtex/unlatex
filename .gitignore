@@ -1,0 +1,6 @@
+# Emacs backup files.
+*~
+# Place to store test script outputs.
+TMP/
+#
+__pycache__/
