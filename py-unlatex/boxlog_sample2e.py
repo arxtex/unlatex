@@ -12,7 +12,7 @@ the Python path.
 
 Typical output is:
 
-$ python3 boxlog_small2e.py 
+$ python3 boxlog_sample2e.py 
 This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=latex)
  restricted \write18 enabled.
 entering extended mode
@@ -41,7 +41,7 @@ if __name__ == '__main__':
         inputdir='',
         outputdir=outdir,
         jobname=stem,
-        boot=r'\input ./misc/latex-preamble.sty \input small2e'
+        boot=r'\input ./misc/latex-preamble.sty \input sample2e'
     )
 
     x.wait()
