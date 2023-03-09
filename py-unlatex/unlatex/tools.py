@@ -36,7 +36,8 @@ def runtex(*, progname, inputdir, outputdir, jobname, boot):
 
     texenv = dict(
         PATH = os.environ['PATH'],
-        TEXINPUT = f'{inputdir}',
+        # GOTCHA: Omitted 'S' and ':'.
+        TEXINPUTS = f'{inputdir}:',
     )
 
     texargs = [
@@ -101,6 +102,14 @@ class LogfileReader:
                 yield Box(pagenums, self.lines)
 
     def writeboxes(self, template):
+        '''The essence of writeboxes is that
+            reader = LogfileReader(logfilename)
+            reader.writeboxes(boxfile_template)
+        where
+            boxfile_template(boxid='1.2.3')
+        gives the desired path for box with id '1.2.3'.
+
+        '''
 
         # TODO: Check that template gives path that exists.
 
