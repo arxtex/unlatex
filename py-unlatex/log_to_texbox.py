@@ -6,6 +6,8 @@ Output: path/to/stem.page.1.tbx etc.
 
 '''
 
+import re
+from unlatex.tools import LogfileReader
 
 # TODO: It seems TeX puts blank line before and after box contents.
 # Completed box being shipped out [1]
@@ -29,16 +31,15 @@ Output: path/to/stem.page.1.tbx etc.
 
 
 # TODO: Provide checking of pagenums.
-import re
-AAA = rb'Completed box being shipped out '
-BBB = rb'\[(?P<pagenums>[-0-9.]+)\]'
+AAA = r'Completed box being shipped out '
+BBB = r'\[(?P<pagenums>[-0-9.]+)\]'
 shipout_pattern = re.compile(AAA + BBB)
 def getpagenums(line):
 
     # TODO: Trailing white space? Use pattern.fullmatch?
     mo = shipout_pattern.match(line)
     if mo:
-        return mo['pagenums'].decode()
+        return mo['pagenums']
 
 def iterboxes(lines):
 
@@ -50,6 +51,9 @@ def iterboxes(lines):
             yield Box(pagenums, lines)
 
 class Box:
+
+    # We assumes that lines is Unicode strings with trailing white
+    # space trimmed.
 
     def __init__(self, pagenums, lines):
 
@@ -75,13 +79,13 @@ if __name__ == '__main__':
 
     filestem = filename[:-len('.log')]    
 
-    lines = open(filename, 'rb')
+    lines = LogfileReader(filename)
     # Strips trailing white space.
-    lines = map(bytes.rstrip, lines)
+    lines = map(str.rstrip, lines)
 
     boxes = iterboxes(lines)
     for box in boxes:
         print(f'Got box {box.pagenums}')
-        with open(f'{filestem}.page.{box.pagenums}.tbx', 'wb') as f:
+        with open(f'{filestem}.page.{box.pagenums}.tbx', 'w') as f:
             for command in box:
-                f.write(command + b'\n')
+                f.write(command + '\n')
