@@ -82,6 +82,7 @@ class LogfileReader:
 
         self.filename = filename
         self.file = open(filename, 'rb')
+        self.lines = iter(self)
 
     def __iter__(self):
 
@@ -89,6 +90,26 @@ class LogfileReader:
 
             output_line = input_line.decode(errors='replace').rstrip()
             yield output_line
+
+    def iterboxes(self):
+
+        for line in self.lines:
+
+            # if line.startswith('Completed box being shipped out '):
+            pagenums = getpagenums(line)
+            if pagenums:
+                yield Box(pagenums, self.lines)
+
+    def writeboxes(self, template):
+
+        # TODO: Check that template gives path that exists.
+
+        for box in self.iterboxes():
+            outname = template(boxid=box.pagenums)
+            print(outname)
+            with open(outname, 'w') as f:
+                for command in box:
+                    f.write(command + '\n')
 
 
 # TODO: It seems TeX puts blank line before and after box contents.
@@ -123,14 +144,7 @@ def getpagenums(line):
     if mo:
         return mo['pagenums']
 
-def iterboxes(lines):
 
-    for line in lines:
-
-        # if line.startswith('Completed box being shipped out '):
-        pagenums = getpagenums(line)
-        if pagenums:
-            yield Box(pagenums, lines)
 
 class Box:
 

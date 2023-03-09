@@ -1,32 +1,35 @@
 '''From TeX log file extract and write its page texbox's.
-Useage: $ python log_to_tbox.py path/to/stem.log
+Useage: $ python3 log_to_texbox.py TMP/OUT/boxlog_sample2e.log
 
 Input: path/to/stem.log
-Output: path/to/stem.page.1.tbx etc.
+Output: path/to/stem.page.1.texbox
+   ...
 
+Use this as a starting point for writing your own automation
+scripts.  I hope to provide an example of such later.
 '''
-
-from unlatex.tools import LogfileReader
-from unlatex.tools import iterboxes
 
 
 if __name__ == '__main__':
 
+    # Get name of logfile from command line arguments.
     import sys
-    filename = sys.argv[1]
+    logfilename = sys.argv[1]
 
-    if not filename.endswith('.log'):
-        raise ValueError(filename)
+    # Check that it is a logfile name.
+    import os
+    root, ext = os.path.splitext(logfilename)
+    if ext != '.log':
+        raise ValueError(logfilename)
 
-    filestem = filename[:-len('.log')]    
+    # Provide a template for boxfile names.
+    # WARNING: Script will fail if template give DNE directory.
+    pattern = f'{root}.page.{{boxid}}.texbox'
+    boxfile_template = pattern.format
 
-    lines = LogfileReader(filename)
-    # Strips trailing white space.
-    lines = map(str.rstrip, lines)
+    # All set, so read and write the boxes.
+    from unlatex.tools import LogfileReader
 
-    boxes = iterboxes(lines)
-    for box in boxes:
-        print(f'Got box {box.pagenums}')
-        with open(f'{filestem}.page.{box.pagenums}.tbx', 'w') as f:
-            for command in box:
-                f.write(command + '\n')
+    reader = LogfileReader(logfilename)
+    # TODO: Provide parameter to control progress reporting.
+    reader.writeboxes(boxfile_template)
