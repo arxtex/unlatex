@@ -1,3 +1,4 @@
+import codecs
 import os
 import subprocess
 
@@ -51,3 +52,39 @@ def runtex(*, progname, inputdir, outputdir, jobname, boot):
     ]
 
     return subprocess.Popen(args=texargs, env=texenv)
+
+
+
+
+
+class LogfileReader:
+    '''Lines in logfile, errors replaced, as an iterable.
+
+    Replaces non-Unicode bytes by official REPLACEMENT CHARACTER, and
+    trims trailing white space (as TeX does on input).
+
+    >>> filename = 'TMP/OUT/boxlog_sample2e.log'
+    >>> reader = LogfileReader(filename)
+    >>> lines = list(reader)
+    >>> lines[0]
+    'This is pdfTeX, Version 3.141592653- ...'
+    >>> lines[-1]
+    'Output written on TMP/OUT/boxlog_sample2e.dvi (3 pages, 7576 bytes).'
+    '''
+
+    # https://docs.python.org/3/library/stdtypes.html#bytes.decode
+    # https://docs.python.org/3/library/codecs.html#error-handlers
+    # https://docs.python.org/3/library/codecs.html#codecs.replace_errors
+    # TODO: Perhaps an iterator, not iterable, should be returned.
+
+    def __init__(self, filename):
+
+        self.filename = filename
+        self.file = open(filename, 'rb')
+
+    def __iter__(self):
+
+        for input_line in self.file:
+
+            output_line = input_line.decode(errors='replace').rstrip()
+            yield output_line
