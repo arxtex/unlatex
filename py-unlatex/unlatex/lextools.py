@@ -33,8 +33,13 @@ if False:
     name_pattern = '[a-zA-Z0-9/]+'
 
 # There are two sorts of name patterns.
-latex_fontname_pattern = '(?:[A-Z0-9]+/)(?:[a-zA-Z]+/)*(?:[0-9]+)'
 tex_command_pattern = '(?:[a-zA-z]+)'
+# NOTE: 'OT1/cmr/m/n/10.95'
+latex_fontname_pattern = (
+    '(?:[A-Z0-9]+/)'
+    '(?:[a-zA-Z]+/)*'
+    '(?:[0-9]+(?:[.][0-9]+)?)'
+    )
 
 # Combine to producce the name pattern we use.
 name_pattern = fr'(?:{latex_fontname_pattern}|{tex_command_pattern})'
