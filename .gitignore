@@ -2,5 +2,7 @@
 *~
 # Place to store test script outputs.
 TMP/
+# Outputs from running tex on examples.
+run/
 #
 __pycache__/
