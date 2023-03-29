@@ -1,3 +1,12 @@
+'''
+
+
+Self-test: /py-unlatex$ python3 -m unlatex.treetools.builder
+[0, [1, 2, [3], 4], 5, 6, 7, {'a': 1, 'b': 2}, 8]
+[0, [1, 2, [3], 4], 5, 6, 7, {'a': 1, 'b': 2}, 8]
+
+'''
+
 # Resources consulted.
 # https://en.wikipedia.org/wiki/Tree_(data_structure)
 # https://github.com/urwid/urwid/blob/master/urwid/treetools.py
@@ -33,23 +42,16 @@
 
 # Let's stick to low-level and use ints, but with names.
 
-from enum import IntEnum
+from .symbol import symbol_factory
 
-class Base(IntEnum):
-    pass
+# Create some symbols.
+keys = ('END', 'dict', 'list')
 
-# TODO: Represent StopInteration by STOP or by RAISE?
-# TODO: Perhaps in line with SGML/XML use END.
-class Control(Base):
-    RAISE = 1
+AAA = symbol_factory(name='AAA', keytype=str, keys=keys)
 
-class Basic(Base):
-    LIST = 2
-    DICT = 3
-
-RAISE = Control.RAISE
-LIST = Basic.LIST
-DICT = Basic.DICT
+RAISE = AAA('END')
+LIST = AAA('list')
+DICT = AAA('dict')
 
 # This explains how DICT works.
 '''
