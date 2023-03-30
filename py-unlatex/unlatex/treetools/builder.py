@@ -61,7 +61,25 @@ DICT = AAA('dict')
 {'a': 'b', 'c': 'd', 'e': 'f'}
 '''
 
-class Doit:
+def call_raise(exception, *_):
+    raise exception
+
+def dict_like(action, items):
+    # TODO: Error if RAISE after odd number of items?
+    return action(zip(items, items))
+
+def list_like(action, items):
+    return action(items)
+
+
+lookup = (
+    (call_raise, StopIteration),
+    (dict_like, dict),
+    (list_like, list),
+)
+
+
+class Builder:
 
     def __init__(self, items):
 
@@ -72,16 +90,16 @@ class Doit:
 
     def __next__(self):
 
-        item = next(self.items)
-        if item is LIST:
-            return list(self)
-        elif item is RAISE:
-            raise StopIteration
-        elif item is DICT:
-            # TODO: Error if RAISE after odd number of items?
-            return dict(zip(self, self))
+        # Look at the next item.
+        curr = next(self.items)
+
+        if type(curr) is AAA:
+            # Process the symbols.
+            fn, param = lookup[curr]
+            return fn(param, self)
         else:
-            return item
+            # Pass through rest unchanged.
+            return curr
 
 
 if __name__ == '__main__':
@@ -104,7 +122,7 @@ if __name__ == '__main__':
     ]
     expected = [0, [1, 2, [3], 4], 5, 6, 7, {'a': 1, 'b': 2}, 8]
 
-    doit = Doit(items)
-    done = list(doit)
+    builder = Builder(items)
+    done = list(builder)
     print(expected)
     print(done)
